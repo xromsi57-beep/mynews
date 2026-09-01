@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily News Portal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <div class="logo">Daily<span>News</span></div>
+    <nav>
+      <a href="#">Home</a>
+      <button id="admin-login-btn" style="background:none; border:none; color:white; cursor:pointer;">Admin Login</button>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Aapki Rozana Ki Khabrein</h1>
+    <p>Tajatam aur satya samachar sabse pehle yahan padhein.</p>
+  </section>
+
+  <main class="container">
+    <h2>Latest Headlines</h2>
+    <div id="news-container" class="news-grid"></div>
+  </main>
+
+  <!-- Hidden Admin Panel (Only visible after login) -->
+  <section id="admin" class="admin-section" style="display: none;">
+    <div class="container">
+      <h2>Publish New Article</h2>
+      <form id="news-form">
+        <input type="text" id="news-title" placeholder="News Title" required>
+        <select id="news-category" required>
+          <option value="General">General</option>
+          <option value="Tech">Tech</option>
+          <option value="National">National</option>
+          <option value="Sports">Sports</option>
+        </select>
+        <input type="url" id="news-image" placeholder="Image URL" required>
+        <textarea id="news-content" rows="5" placeholder="News content..." required></textarea>
+        <button type="submit">Publish Now</button>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2026 Daily News Portal. All Rights Reserved.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
