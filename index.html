@@ -1,54 +1,413 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daily News Portal</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chronicle 24/7 - Live Global News</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --danger: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            border-bottom: 1px solid var(--card-border);
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(10px);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.8rem;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        header p {
+            margin: 10px 0 0;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .top-action-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .login-trigger-btn {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--card-border);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .login-trigger-btn:hover {
+            border-color: var(--accent);
+            color: var(--text-main);
+        }
+
+        .admin-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(12px);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            margin-bottom: 40px;
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .admin-panel.active {
+            display: block;
+        }
+
+        .admin-panel h2 {
+            margin-top: 0;
+            color: #818cf8;
+            font-size: 1.4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-admin {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 1rem;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: var(--accent);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            height: 120px;
+        }
+
+        button.primary-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        button.primary-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        .news-feed h2 {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            border-left: 4px solid var(--accent);
+            padding-left: 12px;
+        }
+
+        .news-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(8px);
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .news-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .news-card h3 {
+            margin-top: 0;
+            font-size: 1.5rem;
+            color: var(--text-main);
+        }
+
+        .news-date {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .news-content {
+            line-height: 1.7;
+            color: #cbd5e1;
+            white-space: pre-wrap;
+            font-size: 1.05rem;
+        }
+
+        .delete-btn {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .delete-btn.admin-visible {
+            display: inline-block;
+        }
+
+        .delete-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .loading-text, .empty-text {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            padding: 40px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
 
-  <header>
-    <div class="logo">Daily<span>News</span></div>
-    <nav>
-      <a href="#">Home</a>
-      <button id="admin-login-btn" style="background:none; border:none; color:white; cursor:pointer;">Admin Login</button>
-    </nav>
-  </header>
+    <header>
+        <h1>Chronicle 24/7</h1>
+        <p>Your Live Global News Stream</p>
+    </header>
 
-  <section class="hero">
-    <h1>Aapki Rozana Ki Khabrein</h1>
-    <p>Tajatam aur satya samachar sabse pehle yahan padhein.</p>
-  </section>
-
-  <main class="container">
-    <h2>Latest Headlines</h2>
-    <div id="news-container" class="news-grid"></div>
-  </main>
-
-  <!-- Hidden Admin Panel (Only visible after login) -->
-  <section id="admin" class="admin-section" style="display: none;">
     <div class="container">
-      <h2>Publish New Article</h2>
-      <form id="news-form">
-        <input type="text" id="news-title" placeholder="News Title" required>
-        <select id="news-category" required>
-          <option value="General">General</option>
-          <option value="Tech">Tech</option>
-          <option value="National">National</option>
-          <option value="Sports">Sports</option>
-        </select>
-        <input type="url" id="news-image" placeholder="Image URL" required>
-        <textarea id="news-content" rows="5" placeholder="News content..." required></textarea>
-        <button type="submit">Publish Now</button>
-      </form>
+        
+        <div class="top-action-bar">
+            <button class="login-trigger-btn" id="toggleLoginBtn" onclick="handleAdminAccess()">🔒 Admin Portal</button>
+        </div>
+
+        <div class="admin-panel" id="adminPanel">
+            <h2>
+                <span>📢 Publish New Article</span>
+                <button class="close-admin" onclick="closeAdminPanel()">✕</button>
+            </h2>
+            <form id="newsForm">
+                <div class="form-group">
+                    <label for="title">Headline</label>
+                    <input type="text" id="title" required placeholder="Catchy news headline...">
+                </div>
+                <div class="form-group">
+                    <label for="content">Full Story</label>
+                    <textarea id="content" required placeholder="Write the complete news report here..."></textarea>
+                </div>
+                <button type="submit" class="primary-btn" id="publishBtn">Publish to Cloud</button>
+            </form>
+        </div>
+
+        <div class="news-feed">
+            <h2>Live Feed</h2>
+            <div id="newsContainer">
+                <div class="loading-text">Connecting to live feed...</div>
+            </div>
+        </div>
+
     </div>
-  </section>
 
-  <footer>
-    <p>&copy; 2026 Daily News Portal. All Rights Reserved.</p>
-  </footer>
+    <script>
+        // --- SUPABASE CONFIGURATION ---
+        const SUPABASE_URL = 'https://lxktfhinbdchhqgoutke.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_dABXCMeRrnUbouX9-AlYhw_ZEzDnJ7_';
 
-  <script src="script.js"></script>
+        const { createClient } = supabase;
+        const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const newsForm = document.getElementById('newsForm');
+        const newsContainer = document.getElementById('newsContainer');
+        const publishBtn = document.getElementById('publishBtn');
+        const adminPanel = document.getElementById('adminPanel');
+
+        let isAdminLoggedIn = false;
+
+        // Admin Security System (Password: admin123)
+        window.handleAdminAccess = function() {
+            if (isAdminLoggedIn) {
+                adminPanel.classList.toggle('active');
+                return;
+            }
+
+            const password = prompt("Enter Admin Secret Password:");
+            if (password === "admin123") {
+                isAdminLoggedIn = true;
+                adminPanel.classList.add('active');
+                document.getElementById('toggleLoginBtn').textContent = "🔓 Admin Panel Open";
+                fetchNews(); // Refresh to show delete buttons
+                alert("Login Successful!");
+            } else if (password !== null) {
+                alert("Incorrect Password!");
+            }
+        };
+
+        window.closeAdminPanel = function() {
+            adminPanel.classList.remove('active');
+        };
+
+        // Fetch and Display News from Supabase
+        async function fetchNews() {
+            const { data, error } = await _supabase
+                .from('news')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Error fetching news:', error);
+                newsContainer.innerHTML = '<div class="empty-text">Failed to load news.</div>';
+                return;
+            }
+
+            newsContainer.innerHTML = '';
+
+            if (!data || data.length === 0) {
+                newsContainer.innerHTML = '<div class="empty-text">No active news broadcasts right now.</div>';
+                return;
+            }
+
+            data.forEach((news) => {
+                let dateStr = new Date(news.created_at).toLocaleString('en-US', { 
+                    month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' 
+                });
+
+                const card = document.createElement('div');
+                card.className = 'news-card';
+                
+                const deleteBtnClass = isAdminLoggedIn ? "delete-btn admin-visible" : "delete-btn";
+
+                card.innerHTML = `
+                    <h3>${escapeHtml(news.title)}</h3>
+                    <div class="news-date">${dateStr}</div>
+                    <div class="news-content">${escapeHtml(news.content)}</div>
+                    <button class="${deleteBtnClass}" onclick="deleteNewsItem(${news.id})">Delete Article</button>
+                `;
+                newsContainer.appendChild(card);
+            });
+        }
+
+        // Publish News to Supabase
+        newsForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            if (!isAdminLoggedIn) return;
+
+            publishBtn.disabled = true;
+            publishBtn.textContent = "Publishing...";
+
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+
+            const { error } = await _supabase
+                .from('news')
+                .insert([{ title, content }]);
+
+            publishBtn.disabled = false;
+            publishBtn.textContent = "Publish to Cloud";
+
+            if (error) {
+                alert("Error publishing news: " + error.message);
+            } else {
+                newsForm.reset();
+                adminPanel.classList.remove('active');
+                fetchNews();
+            }
+        });
+
+        // Delete News Item
+        window.deleteNewsItem = async function(id) {
+            if (!isAdminLoggedIn) return;
+            if (confirm("Are you sure you want to delete this news?")) {
+                const { error } = await _supabase
+                    .from('news')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) {
+                    alert("Error deleting news: " + error.message);
+                } else {
+                    fetchNews();
+                }
+            }
+        };
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+            return text.toString().replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+
+        // Load news when page opens
+        fetchNews();
+    </script>
 </body>
 </html>
