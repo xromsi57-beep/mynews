@@ -166,10 +166,52 @@
             padding-left: 12px;
         }
 
-        .ad-container {
-            display: flex;
-            justify-content: center;
+        /* Interactive AdBanner Styling */
+        .interactive-ad-banner {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(192, 132, 252, 0.15));
+            border: 1px solid rgba(129, 140, 248, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
             margin-bottom: 25px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .interactive-ad-banner:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+        }
+
+        .interactive-ad-banner h3 {
+            margin: 0 0 8px 0;
+            font-size: 1.2rem;
+            color: #c084fc;
+        }
+
+        .interactive-ad-banner p {
+            margin: 0 0 15px 0;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .ad-cta-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: opacity 0.3s, transform 0.2s;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .ad-cta-btn:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
         }
 
         .news-card {
@@ -278,10 +320,11 @@
         <div class="news-feed">
             <h2>Live Feed</h2>
             
-            <!-- Advertisement Section Added Here -->
-            <div class="ad-container">
-                <ins style="display:inline-block; width: 300px; height: 250px;" data-width="300" data-height="250" class="c3ed5df49a0" data-domain="//data527.click" data-affquery="/5d980c1bb9e9ce6fa349/3ed5df49a0/?placementName=advertica"></ins>
-                <script src="//data527.click/js/responsive.js" async></script>
+            <!-- Interactive AdBanner Section Added Here with your Adsterra Link -->
+            <div class="interactive-ad-banner">
+                <h3>🔴 Special Live Coverage & Updates</h3>
+                <p>Click below to stream live broadcast feeds and exclusive reports.</p>
+                <a href="https://www.profitableratecpmnetwork.com/fcsxqmrtf?key=77785123756f4a00c1f2d566da9c0500" target="_blank" class="ad-cta-btn">Watch Live Stream Now</a>
             </div>
 
             <div id="newsContainer">
