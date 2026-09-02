@@ -24,6 +24,7 @@
             min-height: 100vh;
             margin: 0;
             padding: 0;
+            padding-bottom: 90px; /* Neeche sticky banner ke liye space */
         }
 
         header {
@@ -166,57 +167,67 @@
             padding-left: 12px;
         }
 
-        /* Original Ad Container */
+        /* Advertica Ad Container (Top) */
         .ad-container {
             display: flex;
             justify-content: center;
             margin-bottom: 25px;
         }
 
-        /* New Interactive Adsterra Banner Styling */
-        .interactive-ad-banner {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(192, 132, 252, 0.15));
-            border: 1px solid rgba(129, 140, 248, 0.3);
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 25px;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            transition: transform 0.3s ease;
+        /* Sticky Bottom Adsterra Banner */
+        .sticky-bottom-ad {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(129, 140, 248, 0.3);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+            z-index: 999;
+            box-sizing: border-box;
         }
 
-        .interactive-ad-banner:hover {
-            transform: translateY(-2px);
-            border-color: var(--accent);
+        .sticky-ad-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .interactive-ad-banner h3 {
-            margin: 0 0 8px 0;
-            font-size: 1.2rem;
+        .sticky-ad-content span {
+            font-size: 1.1rem;
+        }
+
+        .sticky-ad-text h4 {
+            margin: 0;
+            font-size: 0.95rem;
             color: #c084fc;
         }
 
-        .interactive-ad-banner p {
-            margin: 0 0 15px 0;
+        .sticky-ad-text p {
+            margin: 2px 0 0;
+            font-size: 0.8rem;
             color: var(--text-muted);
-            font-size: 0.95rem;
         }
 
-        .ad-cta-btn {
-            display: inline-block;
+        .sticky-cta-btn {
             background: linear-gradient(135deg, #6366f1, #a855f7);
             color: white;
             text-decoration: none;
-            padding: 10px 24px;
-            border-radius: 8px;
+            padding: 8px 18px;
+            border-radius: 6px;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             transition: opacity 0.3s, transform 0.2s;
             box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+            white-space: nowrap;
         }
 
-        .ad-cta-btn:hover {
+        .sticky-cta-btn:hover {
             opacity: 0.9;
             transform: scale(1.02);
         }
@@ -325,17 +336,8 @@
         </div>
 
         <div class="news-feed">
-            
-            <!-- NEW INTERACTIVE ADSTERRA BANNER -->
-            <div class="interactive-ad-banner">
-                <h3>🔴 Special Live Coverage & Updates</h3>
-                <p>Click below to stream live broadcast feeds and exclusive reports.</p>
-                <a href="https://www.profitableratecpmnetwork.com/fcsxqmrtf?key=77785123756f4a00c1f2d566da9c0500" target="_blank" class="ad-cta-btn">Watch Live Stream Now</a>
-            </div>
-
             <h2>Live Feed</h2>
             
-            <!-- ORIGINAL ADVERTISEMENT SECTION (Untouched) -->
             <div class="ad-container">
                 <ins style="display:inline-block; width: 300px; height: 250px;" data-width="300" data-height="250" class="c3ed5df49a0" data-domain="//data527.click" data-affquery="/5d980c1bb9e9ce6fa349/3ed5df49a0/?placementName=advertica"></ins>
                 <script src="//data527.click/js/responsive.js" async></script>
@@ -346,6 +348,17 @@
             </div>
         </div>
 
+    </div>
+
+    <div class="sticky-bottom-ad">
+        <div class="sticky-ad-content">
+            <span>🔴</span>
+            <div class="sticky-ad-text">
+                <h4>Special Live Stream Feed</h4>
+                <p>Click to access unrestricted live global broadcasts.</p>
+            </div>
+        </div>
+        <a href="https://www.profitableratecpmnetwork.com/fcsxqmrtf?key=77785123756f4a00c1f2d566da9c0500" target="_blank" class="sticky-cta-btn">Watch Now</a>
     </div>
 
     <script>
