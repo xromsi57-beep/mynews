@@ -24,7 +24,7 @@
             min-height: 100vh;
             margin: 0;
             padding: 0;
-            padding-bottom: 90px; /* Space for sticky bottom ad */
+            padding-bottom: 90px;
         }
 
         header {
@@ -167,7 +167,7 @@
             padding-left: 12px;
         }
 
-        /* Advertica Ad Container (Top) */
+        /* Ad Containers / Positions */
         .ad-container {
             display: flex;
             justify-content: center;
@@ -178,7 +178,7 @@
             padding: 15px;
         }
 
-        /* Sticky Bottom Adsterra Banner */
+        /* Sticky Bottom Adsterra Banner (Position 5) */
         .sticky-bottom-ad {
             position: fixed;
             bottom: 0;
@@ -342,159 +342,5 @@
         <div class="news-feed">
             <h2>Live Feed</h2>
             
-            <div class="ad-container">
-                <ins style="display:inline-block; width: 300px; height: 250px;" data-width="300" data-height="250" class="c3ed5df49a0" data-domain="//data527.click" data-affquery="/5d980c1bb9e9ce6fa349/3ed5df49a0/?placementName=advertica"></ins>
-                <script src="//data527.click/js/responsive.js" async></script>
-            </div>
-
-            <div id="newsContainer">
-                <div class="loading-text">Connecting to live feed...</div>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="sticky-bottom-ad">
-        <div class="sticky-ad-content">
-            <span>🔴</span>
-            <div class="sticky-ad-text">
-                <h4>Special Live Stream Feed</h4>
-                <p>Click to access unrestricted live global broadcasts.</p>
-            </div>
-        </div>
-        <a href="https://www.profitableratecpmnetwork.com/fcsxqmrtf?key=77785123756f4a00c1f2d566da9c0500" target="_blank" class="sticky-cta-btn">Watch Now</a>
-    </div>
-
-    <script>
-        // --- SUPABASE CONFIGURATION ---
-        const SUPABASE_URL = 'https://lxktfhinbdchhqgoutke.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_dABXCMeRrnUbouX9-AlYhw_ZEzDnJ7_';
-
-        const { createClient } = supabase;
-        const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        const newsForm = document.getElementById('newsForm');
-        const newsContainer = document.getElementById('newsContainer');
-        const publishBtn = document.getElementById('publishBtn');
-        const adminPanel = document.getElementById('adminPanel');
-
-        let isAdminLoggedIn = false;
-
-        // Admin Security System (Password: admin123)
-        window.handleAdminAccess = function() {
-            if (isAdminLoggedIn) {
-                adminPanel.classList.toggle('active');
-                return;
-            }
-
-            const password = prompt("Enter Admin Secret Password:");
-            if (password === "admin123") {
-                isAdminLoggedIn = true;
-                adminPanel.classList.add('active');
-                document.getElementById('toggleLoginBtn').textContent = "🔓 Admin Panel Open";
-                fetchNews(); // Refresh to show delete buttons
-                alert("Login Successful!");
-            } else if (password !== null) {
-                alert("Incorrect Password!");
-            }
-        };
-
-        window.closeAdminPanel = function() {
-            adminPanel.classList.remove('active');
-        };
-
-        // Fetch and Display News from Supabase
-        async function fetchNews() {
-            const { data, error } = await _supabase
-                .from('news')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            if (error) {
-                console.error('Error fetching news:', error);
-                newsContainer.innerHTML = '<div class="empty-text">Failed to load news.</div>';
-                return;
-            }
-
-            newsContainer.innerHTML = '';
-
-            if (!data || data.length === 0) {
-                newsContainer.innerHTML = '<div class="empty-text">No active news broadcasts right now.</div>';
-                return;
-            }
-
-            data.forEach((news) => {
-                let dateStr = new Date(news.created_at).toLocaleString('en-US', { 
-                    month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' 
-                });
-
-                const card = document.createElement('div');
-                card.className = 'news-card';
-                
-                const deleteBtnClass = isAdminLoggedIn ? "delete-btn admin-visible" : "delete-btn";
-
-                card.innerHTML = `
-                    <h3>${escapeHtml(news.title)}</h3>
-                    <div class="news-date">${dateStr}</div>
-                    <div class="news-content">${escapeHtml(news.content)}</div>
-                    <button class="${deleteBtnClass}" onclick="deleteNewsItem(${news.id})">Delete Article</button>
-                `;
-                newsContainer.appendChild(card);
-            });
-        }
-
-        // Publish News to Supabase
-        newsForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            if (!isAdminLoggedIn) return;
-
-            publishBtn.disabled = true;
-            publishBtn.textContent = "Publishing...";
-
-            const title = document.getElementById('title').value;
-            const content = document.getElementById('content').value;
-
-            const { error } = await _supabase
-                .from('news')
-                .insert([{ title, content }]);
-
-            publishBtn.disabled = false;
-            publishBtn.textContent = "Publish to Cloud";
-
-            if (error) {
-                alert("Error publishing news: " + error.message);
-            } else {
-                newsForm.reset();
-                adminPanel.classList.remove('active');
-                fetchNews();
-            }
-        });
-
-        // Delete News Item
-        window.deleteNewsItem = async function(id) {
-            if (!isAdminLoggedIn) return;
-            if (confirm("Are you sure you want to delete this news?")) {
-                const { error } = await _supabase
-                    .from('news')
-                    .delete()
-                    .eq('id', id);
-
-                if (error) {
-                    alert("Error deleting news: " + error.message);
-                } else {
-                    fetchNews();
-                }
-            }
-        };
-
-        function escapeHtml(text) {
-            if (!text) return '';
-            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-            return text.toString().replace(/[&<>"']/g, function(m) { return map[m]; });
-        }
-
-        // Load news when page opens
-        fetchNews();
-    </script>
-</body>
-</html>
+            <div class="ad-container" id="position-1">
+                <ins style="display:inline-block; width: 300px; height: 250px;" data-width="300" data-height="250" class="c3ed5df49a0" data-domain="//data527.click" data-affquery="/5d980c1bb9e9ce6fa349/3ed5df49
